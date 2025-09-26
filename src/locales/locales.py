@@ -40,7 +40,12 @@ LOCALES = {
         "nick_placeholder": "Введите никнейм",
         "level_label": "Ваш Steam уровень",
         "level_placeholder": "Введите уровень",
-        "verify_btn": "✅ Перейти к верификации"
+        "verify_btn": "✅ Перейти к верификации",
+
+        "verification_start": "🔍 Начинаем верификацию...",
+        "verification_processing": "⏳ Проверяем ваши данные...",
+        "verification_delay": "Пожалуйста, подождите {delay} секунд",
+        "verification_success": "✅ Верификация успешно завершена!",
     },
     "EN": {
         # General
@@ -83,7 +88,12 @@ LOCALES = {
         "nick_placeholder": "Enter your nickname",
         "level_label": "Your Steam level",
         "level_placeholder": "Enter your level",
-        "verify_btn": "✅ Go to verification"
+        "verify_btn": "✅ Go to verification",
+
+        "verification_start": "🔍 Starting verification...",
+        "verification_processing": "⏳ Checking your data...",
+        "verification_delay": "Please wait {delay} seconds",
+        "verification_success": "✅ Verification completed successfully!",
     }
 }
 

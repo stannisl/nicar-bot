@@ -23,7 +23,6 @@ async def verify_command(interaction: discord.Interaction):
         color=0x0099ff
     )
     
-    # Создаем View только когда команда вызывается
     view = create_language_view()
     await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 

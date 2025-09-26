@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     RESULTS_FILE: str = "data.json"
     GUILD_ID: int = None
+    MIN_DELAY_VERIFICATION: int = 5
+    MAX_DELAY_VERIFICATION: int = 10
 
     class Config:
         env_file = ".env"

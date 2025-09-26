@@ -17,12 +17,10 @@ class SteamBot(commands.Bot):
         )
 
     async def setup_hook(self):
-        # Добавляем слеш-команды
         self.tree.add_command(verify_command)
         self.tree.add_command(help_command)
         self.tree.add_command(cancel_command)
         
-        # Синхронизируем команды
         try:
             if settings.GUILD_ID:
                 guild = discord.Object(id=settings.GUILD_ID)
@@ -39,10 +37,8 @@ class SteamBot(commands.Bot):
         logger.info(f'Bot is ready! Logged in as {self.user} (ID: {self.user.id})')
         await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="за верификациями"))
 
-# Создаем экземпляр бота
 bot = SteamBot()
 
-# Обработчик ошибок команд
 @bot.tree.error
 async def on_app_command_error(interaction: discord.Interaction, error: Exception):
     logger.error(f"Command error: {error}")
