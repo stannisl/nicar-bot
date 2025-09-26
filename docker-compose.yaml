@@ -1,0 +1,11 @@
+services:
+  discord-bot:
+    build: .
+    container_name: discord-bot
+    restart: always
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DISCORD_TOKEN=${DISCORD_TOKEN}   # лучше хранить токен в .env
+    volumes:
+      - .:/app
+    command: python src/bot.py

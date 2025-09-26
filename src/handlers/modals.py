@@ -75,7 +75,6 @@ class VerificationModal(Modal):
         
         delay = random.randint(settings.MIN_DELAY_VERIFICATION, settings.MAX_DELAY_VERIFICATION)
         
-        # Создаем прогресс-бар
         for progress in range(0, delay + 1):
             percentage = (progress / delay) * 100
             progress_bar = self.create_progress_bar(percentage, 20)
