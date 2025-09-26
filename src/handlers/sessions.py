@@ -1,0 +1,1 @@
+user_sessions: dict[int, str] = {}  # user_id -> язык

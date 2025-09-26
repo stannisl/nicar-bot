@@ -17,6 +17,7 @@ def save_user_record(record: Dict[str, Any], path: str) -> None:
             data = []
 
     record["time"] = datetime.now(timezone.utc).isoformat() 
+    record["discord_username"] = record.get("username", "Unknown")
 
     data.append(record)
     p.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")

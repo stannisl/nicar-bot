@@ -1,5 +1,6 @@
 from loguru import logger
 import sys
+from .discord_logger import setup_discord_logging
 
 logger.remove()
 logger.add(
@@ -13,3 +14,5 @@ logger.add(
     retention="10 days",
     level="DEBUG"
 )
+
+setup_discord_logging()
