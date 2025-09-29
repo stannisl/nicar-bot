@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     DISCORD_REDIRECT_URI: str
     OAUTH_SERVER_HOST: str = "localhost"
     OAUTH_SERVER_PORT: int = 8080
+    START_WEB_SERVER: bool = False
 
     class Config:
         env_file = ".env"

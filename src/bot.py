@@ -6,6 +6,7 @@ from utils.logger import logger
 from handlers.commands import verify_command, help_command, cancel_command
 from web.server import start_web_server
 from shared import set_bot_instance  # Добавляем импорт
+from handlers.oauth import oauth_handler  # Добавляем импорт
 
 class SteamBot(commands.Bot):
     def __init__(self):
@@ -39,6 +40,7 @@ class SteamBot(commands.Bot):
             logger.error(f"Failed to sync commands: {e}")
 
         # Запускаем веб-сервер
+        
         try:
             self.web_runner = await start_web_server()
             logger.info("Web server started successfully")
@@ -47,6 +49,7 @@ class SteamBot(commands.Bot):
 
     async def on_ready(self):
         logger.info(f'Bot is ready! Logged in as {self.user} (ID: {self.user.id})')
+        logger.info(f'Verification link URL: {oauth_handler.get_oauth_url()}')
         await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="за верификациями"))
 
     async def close(self):

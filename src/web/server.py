@@ -17,8 +17,9 @@ class WebServer:
         aiohttp_jinja2.setup(self.app, loader=jinja2.FileSystemLoader(templates_path))
 
     def setup_routes(self):
-        self.app.router.add_get('/', self.index)
         self.app.router.add_get('/oauth/callback', self.oauth_callback)
+
+        self.app.router.add_get('/', self.index)
         self.app.router.add_get('/success', self.success)
         self.app.router.add_get('/error', self.error)
 
