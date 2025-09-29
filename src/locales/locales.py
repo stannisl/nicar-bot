@@ -46,9 +46,11 @@ LOCALES = {
         "verification_processing": "⏳ Проверяем ваши данные...",
         "verification_delay": "Пожалуйста, подождите {delay} секунд",
         "verification_success": "✅ Верификация успешно завершена!",
+        "verification_complete": "✅ Верификация завершена!",
     },
     "EN": {
         # General
+        "verification_complete": "✅ Verification complete!",
         "greeting": "👋 Hello! Let's get started. Please choose your language 🌐",
         "choose_lang": "Choose your language:",
         "cancel": "❌ Cancel",

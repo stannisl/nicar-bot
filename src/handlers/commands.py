@@ -65,3 +65,68 @@ async def cancel_command(interaction: discord.Interaction):
             color=0xff0000
         )
         await interaction.response.send_message(embed=embed, ephemeral=True)
+
+@app_commands.command(name="start_verify", description="Начать верификацию для пользователя (только для админов)")
+@app_commands.default_permissions(administrator=True)
+@app_commands.checks.has_permissions(administrator=True)
+async def ls_command(interaction: discord.Interaction, user: discord.User):
+    """Команда для админов - запуск верификации для указанного пользователя"""
+    from handlers.views import create_language_view
+    from locales.locales import get_localized_text
+    
+    if not interaction.user.guild_permissions.administrator:
+        embed = discord.Embed(
+            title="❌ Ошибка",
+            description="У вас нет прав для использования этой команды",
+            color=0xff0000
+        )
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+        return
+    
+    # Проверяем активную сессию
+    if user.id in user_sessions:
+        embed = discord.Embed(
+            title=get_localized_text("RU", "active_session"),
+            description=get_localized_text("RU", "active_session_desc"),
+            color=0xff0000
+        )
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+        return
+    
+    embed = discord.Embed(
+        title=get_localized_text("RU", "welcome"),
+        description=get_localized_text("RU", "greeting"),
+        color=0x0099ff
+    )
+    
+    view = create_language_view()
+    
+    try:
+        # Пытаемся отправить в ЛС
+        await user.send(embed=embed, view=view)
+        success_embed = discord.Embed(
+            title="✅ Успех",
+            description=f"Верификация запущена в ЛС для пользователя {user.mention}",
+            color=0x00ff00
+        )
+        await interaction.response.send_message(embed=success_embed, ephemeral=True)
+        
+    except discord.Forbidden:
+        # Если ЛС закрыты, запускаем верификацию в текущем канале
+        warning_embed = discord.Embed(
+            title="⚠️ Внимание",
+            description=f"{user.mention} ЛС закрыты. Верификация запущена здесь.",
+            color=0xffff00
+        )
+        await interaction.response.send_message(embed=warning_embed)
+        
+        # Отправляем основное сообщение верификации
+        await interaction.channel.send(content=user.mention, embed=embed, view=view)
+        
+    except Exception as e:
+        error_embed = discord.Embed(
+            title="❌ Ошибка",
+            description=f"Не удалось запустить верификацию: {str(e)}",
+            color=0xff0000
+        )
+        await interaction.response.send_message(embed=error_embed, ephemeral=True)

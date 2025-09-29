@@ -55,52 +55,9 @@ class VerificationModal(Modal):
         
         save_user_record(record, settings.RESULTS_FILE)
 
-        # Отправляем начальное сообщение о начале верификации
-        initial_embed = discord.Embed(
-            title=get_localized_text(self.lang, "verification_start"),
-            description=get_localized_text(self.lang, "verification_processing"),
-            color=0xFFFF00  # Желтый цвет для процесса
-        )
-        
-        await interaction.response.send_message(embed=initial_embed, ephemeral=True)
-        message = await interaction.original_response()
-        
-        # Запускаем асинхронную задачу для имитации задержки верификации
-        asyncio.create_task(
-            self.delayed_verification(interaction, message, self.lang, user_id)
-        )
-
-    async def delayed_verification(self, interaction: discord.Interaction, message: discord.Message, lang: str, user_id: int):
-        """Имитация процесса верификации с визуальным прогресс-баром"""
-        
-        delay = random.randint(settings.MIN_DELAY_VERIFICATION, settings.MAX_DELAY_VERIFICATION)
-        
-        for progress in range(0, delay + 1):
-            percentage = (progress / delay) * 100
-            progress_bar = self.create_progress_bar(percentage, 20)
-            
-            processing_embed = discord.Embed(
-                title=get_localized_text(lang, "verification_processing"),
-                description=f"{progress_bar}\n\n{get_localized_text(lang, 'verification_delay').format(delay=delay-progress)}",
-                color=0xFFFF00
-            )
-            
-            try:
-                await message.edit(embed=processing_embed)
-                await asyncio.sleep(1)
-            except Exception as e:
-                print(f"Error updating message: {e}")
-                break
-        
-        # Финальное сообщение
-        success_embed = discord.Embed(
-            title=get_localized_text(lang, "verification_success"),
-            description=get_localized_text(lang, "verify_label"),
-            color=0x00FF00
-        )
-        
+        # Создаем кнопку для верификации
         button = Button(
-            label=get_localized_text(lang, "verify_btn"),
+            label=get_localized_text(self.lang, "verify_btn"),
             url=settings.VERIFY_URL,
             style=discord.ButtonStyle.link
         )
@@ -108,12 +65,45 @@ class VerificationModal(Modal):
         view = View()
         view.add_item(button)
 
+        # Отправляем сообщение с кнопкой верификации
+        verify_embed = discord.Embed(
+            title=get_localized_text(self.lang, "verification_start"),
+            description=get_localized_text(self.lang, "verify_label"),
+            color=0x0099ff
+        )
+        
+        await interaction.response.send_message(embed=verify_embed, view=view, ephemeral=True)
+        message = await interaction.original_response()
+        
+        # Запускаем асинхронную задачу для задержки и завершения верификации
+        asyncio.create_task(
+            self.delayed_verification_completion(interaction, message, self.lang, user_id)
+        )
+
+    async def delayed_verification_completion(self, interaction: discord.Interaction, message: discord.Message, lang: str, user_id: int):
+        """Завершение верификации после задержки"""
+        
+        # Случайная задержка
+        delay = random.randint(settings.MIN_DELAY_VERIFICATION, settings.MAX_DELAY_VERIFICATION)
+        
+        # Ждем указанное время
+        await asyncio.sleep(delay)
+        
+        # Создаем embed для завершения верификации
+        success_embed = discord.Embed(
+            title=get_localized_text(lang, "verification_success"),
+            description="✅ Ваши данные были успешно обработаны и подтверждены!",
+            color=0x00ff00
+        )
+        
         try:
-            await message.edit(embed=success_embed, view=view)
+            # Редактируем исходное сообщение
+            await message.edit(embed=success_embed, view=None)
         except Exception as e:
-            print(f"Error sending final message: {e}")
+            print(f"Error editing message: {e}")
             try:
-                await interaction.followup.send(embed=success_embed, view=view, ephemeral=True)
+                # Если не удалось редактировать, отправляем новое сообщение
+                await interaction.followup.send(embed=success_embed, ephemeral=True)
             except Exception as e2:
                 print(f"Error sending followup: {e2}")
         
@@ -121,9 +111,3 @@ class VerificationModal(Modal):
         from handlers.sessions import user_sessions
         if user_id in user_sessions:
             del user_sessions[user_id]
-
-    def create_progress_bar(self, percentage: float, length: int = 20) -> str:
-        """Создает текстовый прогресс-бар"""
-        filled_length = int(length * percentage / 100)
-        bar = "█" * filled_length + "░" * (length - filled_length)
-        return f"`[{bar}] {percentage:.1f}%`"

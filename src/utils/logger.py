@@ -10,7 +10,7 @@ logger.add(
 )
 logger.add(
     "logs/bot.log",
-    rotation="500 MB",
+    rotation="100 MB",
     retention="10 days",
     level="DEBUG"
 )
