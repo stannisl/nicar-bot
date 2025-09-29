@@ -12,6 +12,12 @@ class Settings(BaseSettings):
     MIN_DELAY_VERIFICATION: int = 5
     MAX_DELAY_VERIFICATION: int = 10
 
+    DISCORD_CLIENT_ID: str
+    DISCORD_CLIENT_SECRET: str
+    DISCORD_REDIRECT_URI: str
+    OAUTH_SERVER_HOST: str = "localhost"
+    OAUTH_SERVER_PORT: int = 8080
+
     class Config:
         env_file = ".env"
 

@@ -1,8 +1,11 @@
+# bot.py
 import discord
 from discord.ext import commands
 from config import settings
 from utils.logger import logger
 from handlers.commands import verify_command, help_command, cancel_command
+from web.server import start_web_server
+from shared import set_bot_instance  # Добавляем импорт
 
 class SteamBot(commands.Bot):
     def __init__(self):
@@ -17,6 +20,9 @@ class SteamBot(commands.Bot):
         )
 
     async def setup_hook(self):
+        # Устанавливаем глобальную ссылку на бота ПЕРЕД запуском веб-сервера
+        set_bot_instance(self)
+        
         self.tree.add_command(verify_command)
         self.tree.add_command(help_command)
         self.tree.add_command(cancel_command)
@@ -24,7 +30,6 @@ class SteamBot(commands.Bot):
         try:
             if settings.GUILD_ID:
                 guild = discord.Object(id=settings.GUILD_ID)
-                # self.tree.copy_global_to(guild=guild)
                 await self.tree.sync(guild=guild)
                 logger.info(f"Commands synced for guild {settings.GUILD_ID}")
             else:
@@ -33,9 +38,22 @@ class SteamBot(commands.Bot):
         except Exception as e:
             logger.error(f"Failed to sync commands: {e}")
 
+        # Запускаем веб-сервер
+        try:
+            self.web_runner = await start_web_server()
+            logger.info("Web server started successfully")
+        except Exception as e:
+            logger.error(f"Failed to start web server: {e}")
+
     async def on_ready(self):
         logger.info(f'Bot is ready! Logged in as {self.user} (ID: {self.user.id})')
         await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="за верификациями"))
+
+    async def close(self):
+        """Очистка при завершении"""
+        if hasattr(self, 'web_runner'):
+            await self.web_runner.cleanup()
+        await super().close()
 
 bot = SteamBot()
 

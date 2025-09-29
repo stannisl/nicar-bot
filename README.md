@@ -122,6 +122,14 @@ docker run -d --env-file .env -v $(pwd)/data.json:/app/data.json discord-steam-b
 
 ## 🔗 Создание бота и приглашение на сервер
 
+1. Go to https://discord.com/developers/applications
+2. Create New Application or select existing
+3. Go to "OAuth2" → "General"
+4. Copy "CLIENT ID" to DISCORD_CLIENT_ID in .env
+5. Click "Reset Secret" and copy to DISCORD_CLIENT_SECRET in .env
+6. In "Redirects" add: http://localhost:8080/oauth/callback
+7. Go to "Bot" section and enable "MESSAGE CONTENT INTENT"
+
 1. Создайте приложение и бота на [Discord Developer Portal](https://discord.com/developers/applications)
 2. В настройках бота включите **SERVER MEMBERS INTENT** и **MESSAGE CONTENT INTENT**
 3. Сгенерируйте ссылку-приглашение с правами:
