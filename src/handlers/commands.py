@@ -18,7 +18,7 @@ async def verify_command(interaction: discord.Interaction):
         return
     
     embed = discord.Embed(
-        title=get_localized_text("RU", "welcome"),
+        title=get_localized_text("EN", "welcome"),
         description=get_localized_text("EN", "greeting"),
         color=0x0099ff
     )
